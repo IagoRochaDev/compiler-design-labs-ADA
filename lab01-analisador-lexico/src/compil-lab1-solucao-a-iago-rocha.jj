@@ -1,0 +1,185 @@
+PARSER_BEGIN(AnalisadorAda)
+
+import java.io.*;
+
+public class AnalisadorAda {
+
+    public static String getNomeToken(Token t) {
+        switch(t.kind) {
+            case AnalisadorAdaConstants.ID: return "ID";
+            case AnalisadorAdaConstants.STRING: return "STRING";
+            case AnalisadorAdaConstants.NUM_INT: return "NUM_INT";
+            case AnalisadorAdaConstants.NUM_DEC: return "NUM_DEC";
+
+            case AnalisadorAdaConstants.ATRIBUICAO: return "ATRIBUICAO";
+            case AnalisadorAdaConstants.SETA: return "SETA";
+            case AnalisadorAdaConstants.PONTO_PONTO: return "PONTO_PONTO";
+            case AnalisadorAdaConstants.POTENCIA: return "POTENCIA";
+            case AnalisadorAdaConstants.DIFERENTE: return "DIFERENTE";
+            case AnalisadorAdaConstants.MAIOR_IGUAL: return "MAIOR_IGUAL";
+            case AnalisadorAdaConstants.MENOR_IGUAL: return "MENOR_IGUAL";
+            case AnalisadorAdaConstants.ROTULO_ESQ: return "ROTULO_ESQ";
+            case AnalisadorAdaConstants.ROTULO_DIR: return "ROTULO_DIR";
+            case AnalisadorAdaConstants.CAIXA: return "CAIXA";
+
+            case AnalisadorAdaConstants.MAIS: return "MAIS";
+            case AnalisadorAdaConstants.MENOS: return "MENOS";
+            case AnalisadorAdaConstants.MULTIPLICACAO: return "MULTIPLICACAO";
+            case AnalisadorAdaConstants.DIVISAO: return "DIVISAO";
+            case AnalisadorAdaConstants.IGUAL: return "IGUAL";
+            case AnalisadorAdaConstants.MENOR: return "MENOR";
+            case AnalisadorAdaConstants.MAIOR: return "MAIOR";
+            case AnalisadorAdaConstants.CONCATENACAO: return "CONCATENACAO";
+            case AnalisadorAdaConstants.PIPE: return "PIPE";
+            case AnalisadorAdaConstants.VIRGULA: return "VIRGULA";
+            case AnalisadorAdaConstants.PONTO: return "PONTO";
+            case AnalisadorAdaConstants.DOIS_PONTOS: return "DOIS_PONTOS";
+            case AnalisadorAdaConstants.PONTO_VIRGULA: return "PONTO_VIRGULA";
+            case AnalisadorAdaConstants.ABRE_PARENTESES: return "ABRE_PARENTESES";
+            case AnalisadorAdaConstants.FECHA_PARENTESES: return "FECHA_PARENTESES";
+            case AnalisadorAdaConstants.ASPAS_SIMPLES: return "ASPAS_SIMPLES";
+            default:
+                return t.image.toUpperCase();
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
+        
+        String arquivoEntrada = "compil-lab1-amostra-b-iago-rocha.adb";
+        String arquivoSaida = "compil-lab1-resposta-c-iago-rocha.txt";
+
+        FileInputStream fis = new FileInputStream(arquivoEntrada);
+        AnalisadorAda analisador = new AnalisadorAda(fis);
+        PrintWriter escritor = new PrintWriter(new FileWriter(arquivoSaida));
+        Token t = analisador.getNextToken();
+        while (t.kind != AnalisadorAdaConstants.EOF) {
+            String nomeDaClasse = getNomeToken(t);
+            escritor.println(nomeDaClasse + " " + t.image);
+            
+            t = analisador.getNextToken();
+        }
+        escritor.close();
+    }
+}
+
+PARSER_END(AnalisadorAda)
+
+SKIP :
+{
+    " " | "\t" | "\n" | "\r"
+}
+
+TOKEN :
+{
+
+< #LETRA: ["a"-"z", "A"-"Z"] > 
+| < #DIGITO: ["0"-"9"] > 
+
+| < ABORT: "abort" > 
+| < ABS: "abs" >
+| < ABSTRACT: "abstract" >
+| < ACCEPT: "accept" >
+| < ACCESS: "access" >
+| < ALIASED: "aliased" >
+| < ALL: "all" >
+| < AND: "and" >
+| < ARRAY: "array" >
+| < AT: "at" >
+| < BEGIN: "begin" >
+| < BODY: "body" >
+| < CASE: "case" >
+| < CONSTANT: "constant" >
+| < DECLARE: "declare" >
+| < DELAY: "delay" >
+| < DELTA: "delta" >
+| < DIGITS: "digits" >
+| < DO: "do" >
+| < ELSE: "else" >
+| < ELSIF: "elsif" >
+| < END: "end" >
+| < ENTRY: "entry" >
+| < EXCEPTION: "exception" >
+| < EXIT: "exit" >
+| < FOR: "for" >
+| < FUNCTION: "function" >
+| < GENERIC: "generic" >
+| < GOTO: "goto" >
+| < IF: "if" >
+| < IN: "in" >
+| < INTERFACE: "interface" >
+| < IS: "is" >
+| < LIMITED: "limited" >
+| < LOOP: "loop" >
+| < MOD: "mod" >
+| < NEW: "new" >
+| < NOT: "not" >
+| < NULL: "null" >
+| < OF: "of" >
+| < OR: "or" >
+| < OTHERS: "others" >
+| < OUT: "out" >
+| < OVERRIDING: "overriding" >
+| < PACKAGE: "package" >
+| < PARALLEL: "parallel" >
+| < PRAGMA: "pragma" >
+| < PRIVATE: "private" >
+| < PROCEDURE: "procedure" >
+| < PROTECTED: "protected" >
+| < RAISE: "raise" >
+| < RANGE: "range" >
+| < RECORD: "record" >
+| < REM: "rem" >
+| < RENAMES: "renames" >
+| < REQUEUE: "requeue" >
+| < RETURN: "return" >
+| < REVERSE: "reverse" >
+| < SELECT: "select" >
+| < SEPARATE: "separate" >
+| < SOME: "some" >     
+| < SUBTYPE: "subtype" >
+| < SYNCHRONIZED: "synchronized" >
+| < TAGGED: "tagged" >
+| < TASK: "task" >
+| < TERMINATE: "terminate" >
+| < THEN: "then" >
+| < TYPE: "type" >
+| < UNTIL: "until" >
+| < USE: "use" >
+| < WHEN: "when" >
+| < WHILE: "while" >
+| < WITH: "with" >
+| < XOR: "xor" >
+
+| < ATRIBUICAO: ":=" >
+| < SETA: "=>" >
+| < PONTO_PONTO: ".." >
+| < POTENCIA: "**" >
+| < DIFERENTE: "/=" >
+| < MAIOR_IGUAL: ">=" >
+| < MENOR_IGUAL: "<=" >
+| < ROTULO_ESQ: "<<" >
+| < ROTULO_DIR: ">>" >
+| < CAIXA: "<>" >
+
+| < MAIS: "+" >
+| < MENOS: "-" >
+| < MULTIPLICACAO: "*" >
+| < DIVISAO: "/" >
+| < IGUAL: "=" >
+| < MENOR: "<" >
+| < MAIOR: ">" >
+| < CONCATENACAO: "&" >
+| < PIPE: "|" >
+| < VIRGULA: "," >
+| < PONTO: "." >
+| < DOIS_PONTOS: ":" >
+| < PONTO_VIRGULA: ";" >
+| < ABRE_PARENTESES: "(" >
+| < FECHA_PARENTESES: ")" >
+| < ASPAS_SIMPLES: "'" >
+
+| < ID: <LETRA> ( <LETRA> | <DIGITO> | "_" )* >
+| < STRING: "\"" (~["\""])* "\"" >
+| < NUM_INT: (<DIGITO>)+ >
+| < NUM_DEC: (<DIGITO>)+ "." (<DIGITO>)+ ( ["e","E"] (["+","-"])? (<DIGITO>)+ )? >
+}
