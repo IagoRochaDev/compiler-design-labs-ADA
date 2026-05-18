@@ -1,0 +1,8 @@
+PROCEDURE procedure
+ID ProgramaMinimo
+IS is
+BEGIN begin
+END end
+ID ProgramaMinimo
+PONTO_VIRGULA ;
+$ $
