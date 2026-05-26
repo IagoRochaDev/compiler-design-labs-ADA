@@ -67,11 +67,15 @@ lab01-analisador-lexico/
 # Navegar para o diretório
 cd lab01-analisador-lexico/src
 
-# Compilar o programa ADA
-gnatmake compil-lab1-amostra-b-iago-rocha.adb
+# Compilar o programa javacc
+javacc compil-lab1-solucao-a-iago-rocha.jj
 
-# Executar
-./compil-lab1-amostra-b-iago-rocha
+# Executar o programa javacc
+javac *.java
+
+# Executar o AnalisadorAda 
+java AnalisadorAda < compil-lab1-amostra-b-iago-rocha.adb
+
 ```
 
 ## 📚 Conceitos Principais

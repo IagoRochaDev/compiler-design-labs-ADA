@@ -68,42 +68,14 @@ Cada arquivo de gramática contém:
 
 ## 🔧 Como Compilar
 
-### Pré-requisitos
-- **Compilador C++:** GCC 9+ (g++)
-  - Windows: MSYS2 / MinGW-w64
-  - Linux: apt/pacman/brew
-- **Make** (opcional, para usar Makefile)
-
 ### Compilação
 
-#### Opção 1: Script fornecido
 ```bash
+# Navegar para src
 cd lab02-parser-lr/src
-./g++
+
 # Executável gerado em ../bin/
-```
-
-#### Opção 2: Linha de comando manual
-```bash
-cd lab02-parser-lr/src
-
-# Compilar todos os arquivos .cpp
-g++ -std=c++11 -o ../bin/parser \
-    sol.cpp Parser.cpp Gramatica.cpp Arvore.cpp TabelaLR1.cpp matriz-util.cpp
-```
-
-#### Opção 3: Compilação separada (object files)
-```bash
-cd lab02-parser-lr/src
-
-g++ -std=c++11 -c sol.cpp -o sol.o
-g++ -std=c++11 -c Parser.cpp -o Parser.o
-g++ -std=c++11 -c Gramatica.cpp -o Gramatica.o
-g++ -std=c++11 -c Arvore.cpp -o Arvore.o
-g++ -std=c++11 -c TabelaLR1.cpp -o TabelaLR1.o
-g++ -std=c++11 -c matriz-util.cpp -o matriz-util.o
-
-g++ -std=c++11 -o ../bin/parser sol.o Parser.o Gramatica.o Arvore.o TabelaLR1.o matriz-util.o
+g++ *.cpp -o ../bin/parserLR.exe
 ```
 
 ## 🚀 Como Executar
@@ -112,11 +84,11 @@ g++ -std=c++11 -o ../bin/parser sol.o Parser.o Gramatica.o Arvore.o TabelaLR1.o 
 # Navegar para bin
 cd lab02-parser-lr/bin
 
-# Executar com entrada padrão
-./parser < ../exemplos/gramatica-1
+# Executar jogando o resultado na tela do terminal
+./parserLR.exe gramatica.conf tabela_lr1.conf < entrada.txt
 
-# Ou com redirecionamento de arquivo
-./parser < ../exemplos/entrada.txt > saida.txt
+# Executar salvando o resultado em um arquivo texto na pasta bin
+./parserLR.exe gramatica.conf tabela_lr1.conf < entrada.txt > saida.txt
 ```
 
 ### Entrada Esperada
