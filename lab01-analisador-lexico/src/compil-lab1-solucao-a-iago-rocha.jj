@@ -20,7 +20,7 @@ public class AnalisadorAda {
             case AnalisadorAdaConstants.MENOR_IGUAL: return "MENOR_IGUAL";
             case AnalisadorAdaConstants.ROTULO_ESQ: return "ROTULO_ESQ";
             case AnalisadorAdaConstants.ROTULO_DIR: return "ROTULO_DIR";
-            case AnalisadorAdaConstants.CAIXA: return "CAIXA";
+            case AnalisadorAdaConstants.MENOR_MAIOR: return "MENOR_MAIOR";
 
             case AnalisadorAdaConstants.MAIS: return "MAIS";
             case AnalisadorAdaConstants.MENOS: return "MENOS";
@@ -159,7 +159,7 @@ TOKEN :
 | < MENOR_IGUAL: "<=" >
 | < ROTULO_ESQ: "<<" >
 | < ROTULO_DIR: ">>" >
-| < CAIXA: "<>" >
+| < MENOR_MAIOR: "<>" >
 
 | < MAIS: "+" >
 | < MENOS: "-" >
