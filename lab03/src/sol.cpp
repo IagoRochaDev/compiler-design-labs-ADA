@@ -14,21 +14,23 @@ using namespace std;
 #include "Parser.hpp"
 #include "Funcao.hpp"
 #include "Analisador.hpp"
+#include "TabelaSimbolos.hpp"
 
 
 int main(int argc, char * argv[]) {
-  if (argc != 3 && argc != 1) {
-    cerr << "Parametros nomes dos arquivos: 1) csv com gramática e 2) csv com tabela LR1" << endl;
+  if (argc != 3 && argc != 1 && argc != 4) {
+    cerr << "Parametros: 1) csv com gramática 2) csv com tabela LR1 [3) arquivo parametros opcional]" << endl;
     return 1;
   }
-  string nome_gramatica, nome_tab_lr1;
+  string nome_gramatica, nome_tab_lr1, arquivo_params;
   if (argc == 1) {
-    //cerr << "Valores padrao utilizados: gramatica9.site e tabela_lr1.conf" << endl;
+    // valores padrao
     nome_gramatica = string("gramatica9.site");
     nome_tab_lr1 = string("tabela_lr1.conf");
   } else {
     nome_gramatica = string(argv[1]);
     nome_tab_lr1 = string(argv[2]);
+    if (argc == 4) arquivo_params = string(argv[3]);
   }
 
   ifstream arq_gramatica(nome_gramatica);
@@ -48,17 +50,30 @@ int main(int argc, char * argv[]) {
   cerr << "Parse executado" << endl;
   arv.debug();
   Funcao* func = Funcao::extrai_funcao(arv.raiz);
-  func->debug();
-  // Exemplo de chamada do analisador semantico.
-  vector<ValorLiteral> parametros_passados;
-  for (int i = 1; i <= 3; ++i) {
-    ValorLiteral valor_parametro;
-    valor_parametro.tipo = new Tipo(Tipo::INT);
-    valor_parametro.valor_int = i*10;
-    parametros_passados.push_back(valor_parametro);
+  if (func == NULL) {
+    cerr << "ERRO: Nenhuma funcao encontrada na arvore de parse" << endl;
+    return 1;
   }
+  func->debug();
+  // Preparar parâmetros: aceita arquivo de parâmetros opcional
+  vector<ValorLiteral> parametros_passados;
+  if (!arquivo_params.empty()) {
+    parametros_passados = TabelaSimbolos::le_parametros(arquivo_params, func->parametros);
+    if (parametros_passados.empty()) {
+      cerr << "Aviso: nenhum parametro lido do arquivo: " << arquivo_params << endl;
+    }
+  } else {
+    // Exemplo padrão caso não haja arquivo de parâmetros
+    for (int i = 1; i <= 3; ++i) {
+      ValorLiteral valor_parametro;
+      valor_parametro.tipo = new Tipo(Tipo::INT);
+      valor_parametro.valor_int = i*10;
+      parametros_passados.push_back(valor_parametro);
+    }
+  }
+
   Analisador ana;
   cout << "Retorno calculado:" << endl;
-  cout << ana.calcula_retorno(func, parametros_passados) << endl;
+  cout << ana.calcula_retorno(func, parametros_passados).como_string() << endl;
   return 0;
 }

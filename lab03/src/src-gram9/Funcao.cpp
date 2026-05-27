@@ -12,10 +12,8 @@
 
   cerr << "DEBUG extrai_funcao: regra=" << no->regra << " simb=" << no->simb << " filhos=" << no->filhos.size() << endl;
 
-  if (no->regra == 1) { // S -> Programa
-    return extrai_funcao(no->filhos[0]);
-  }
-  if (no->regra == 2) { // Programa -> ListaContexto PROCEDURE ID IS ListaDeclaracoes BEGIN ListaComandos END ID PONTO_VIRGULA
+  if (no->simb == "Programa" && no->regra == 2) { // Programa -> ListaContexto PROCEDURE ID IS ListaDeclaracoes BEGIN ListaComandos END ID PONTO_VIRGULA ListaFuncoesTop
+    cerr << "  -> Encontrou Programa (regra 2), retornando procedure main" << endl;
     Funcao* res = new Funcao();
     res->tipo_retorno = NULL;
     res->nome_funcao = ID::extrai_ID(no->filhos[2]);
@@ -23,21 +21,35 @@
     res->comandos = Comando::extrai_lista_comandos(no->filhos[6]);
     return res;
   }
-  if (no->regra == 31) { // DeclFunc -> FUNCTION ID ParametrosFunc RETURN Acesso IS ListaDeclaracoes BEGIN ListaComandos END ID PONTO_VIRGULA
-    Funcao* res = new Funcao();
-    res->tipo_retorno = Tipo::extrai_Tipo(no->filhos[4]);
-    res->nome_funcao = ID::extrai_ID(no->filhos[1]);
-    res->parametros = Variavel::extrai_lista_parametros(no->filhos[2]);
-    res->comandos = Comando::extrai_lista_comandos(no->filhos[8]);
-    return res;
+  
+  // DeclFunc can appear with regra 32 or 33
+  if (no->simb == "DeclFunc" && (no->regra == 32 || no->regra == 33)) {
+    cerr << "  -> Encontrou DeclFunc (regra " << no->regra << "), extraindo..." << endl;
+    if (no->filhos.size() >= 9) {
+      // DeclFunc structure: FUNCTION ID ParametrosFunc RETURN Acesso IS ListaDeclaracoes BEGIN ListaComandos END ID PONTO_VIRGULA
+      Funcao* res = new Funcao();
+      res->tipo_retorno = Tipo::extrai_Tipo(no->filhos[4]);
+      res->nome_funcao = ID::extrai_ID(no->filhos[1]);
+      res->parametros = Variavel::extrai_lista_parametros(no->filhos[2]);
+      res->comandos = Comando::extrai_lista_comandos(no->filhos[8]);
+      cerr << "  -> DeclFunc extraido com sucesso" << endl;
+      return res;
+    } else {
+      cerr << "  -> DeclFunc com tamanho insuficiente (" << no->filhos.size() << " filhos)" << endl;
+    }
   }
 
   // Try recursively on children
+  cerr << "  -> Procurando recursivamente em " << no->filhos.size() << " filhos" << endl;
   for (int i = 0; i < no->filhos.size(); ++i) {
     Funcao* res = extrai_funcao(no->filhos[i]);
-    if (res != NULL) return res;
+    if (res != NULL) {
+      cerr << "  -> Encontrou em filho " << i << endl;
+      return res;
+    }
   }
 
+  cerr << "  -> Nao encontrou, retornando NULL" << endl;
   return NULL;
 }
 
