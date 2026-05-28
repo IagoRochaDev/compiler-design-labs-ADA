@@ -44,22 +44,55 @@ public class AnalisadorAda {
     }
 
     public static void main(String[] args) throws Exception {
-        
-        String arquivoEntrada = "compil-lab1-amostra-b-iago-rocha.adb";
-        String arquivoSaida = "compil-lab1-resposta-c-iago-rocha.txt";
-
-        FileInputStream fis = new FileInputStream(arquivoEntrada);
-        AnalisadorAda analisador = new AnalisadorAda(fis);
-        PrintWriter escritor = new PrintWriter(new FileWriter(arquivoSaida));
-        Token t = analisador.getNextToken();
-        while (t.kind != AnalisadorAdaConstants.EOF) {
-            String nomeDaClasse = getNomeToken(t);
-            escritor.println(nomeDaClasse + " " + t.image);
-            
-            t = analisador.getNextToken();
-        }
-        escritor.close();
+    if (args.length == 0) {
+        System.out.println("Erro: Nenhum arquivo de entrada foi especificado.");
+        System.out.println("Uso: java AnalisadorAda <arquivo1.adb> <arquivo2.adb> ...");
+        System.out.println("Dica: Use 'java AnalisadorAda *.adb' para processar todos os arquivos da pasta.");
+        return;
     }
+
+    AnalisadorAda analisador = null;
+
+    for (String arquivoEntrada : args) {
+        System.out.println("Analisando: " + arquivoEntrada);
+
+        String arquivoSaida;
+        int pontoIndex = arquivoEntrada.lastIndexOf('.');
+        if (pontoIndex != -1) {
+            arquivoSaida = arquivoEntrada.substring(0, pontoIndex) + ".tokens";
+        } else {
+            arquivoSaida = arquivoEntrada + ".tokens";
+        }
+
+        try {
+            FileInputStream fis = new FileInputStream(arquivoEntrada);
+            
+            if (analisador == null) {
+                analisador = new AnalisadorAda(fis);
+            } else {
+                analisador.ReInit(fis); 
+            }
+
+            PrintWriter escritor = new PrintWriter(new FileWriter(arquivoSaida));
+            Token t = analisador.getNextToken();
+            
+            while (t.kind != AnalisadorAdaConstants.EOF) {
+                String nomeDaClasse = getNomeToken(t);
+                escritor.println(nomeDaClasse + " " + t.image);
+                t = analisador.getNextToken();
+            }
+            escritor.println("$ $");
+            escritor.close();
+            fis.close();
+            System.out.println(" -> Sucesso! Gerado: " + arquivoSaida);
+
+        } catch (FileNotFoundException e) {
+            System.err.println(" -> Erro: Arquivo nao encontrado: " + arquivoEntrada);
+        } catch (Exception e) {
+            System.err.println(" -> Erro ao processar " + arquivoEntrada + ": " + e.getMessage());
+        }
+    }
+}
 }
 
 PARSER_END(AnalisadorAda)
