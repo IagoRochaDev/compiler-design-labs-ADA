@@ -24,8 +24,8 @@ string normaliza_nome_tipo(string nome) {
 
 Tipo* tipo_por_nome(string nome) {
   nome = normaliza_nome_tipo(nome);
-  if (nome == "INT") return new Tipo(Tipo::INT);
-  if (nome == "FLOAT") return new Tipo(Tipo::FLOAT);
+  if (nome == "INT" || nome == "INTEGER") return new Tipo(Tipo::INT);
+  if (nome == "FLOAT" || nome == "REAL") return new Tipo(Tipo::FLOAT);
   if (nome == "BOOL" || nome == "BOOLEAN") return new Tipo(Tipo::BOOL);
   return NULL;
 }

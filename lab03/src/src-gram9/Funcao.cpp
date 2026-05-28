@@ -12,8 +12,19 @@
 
   cerr << "DEBUG extrai_funcao: regra=" << no->regra << " simb=" << no->simb << " filhos=" << no->filhos.size() << endl;
 
-  if (no->simb == "Programa" && no->regra == 2) { // Programa -> ListaContexto PROCEDURE ID IS ListaDeclaracoes BEGIN ListaComandos END ID PONTO_VIRGULA ListaFuncoesTop
-    cerr << "  -> Encontrou Programa (regra 2), retornando procedure main" << endl;
+  if (no->simb == "Programa" && no->regra == 1) { // Programa -> ListaContexto PROCEDURE ID IS ListaDeclaracoes BEGIN ListaComandos END ID PONTO_VIRGULA ListaFuncoesTop
+    // Se houver funções internas, extraímos a primeira função declarada dentro de ListaFuncoesTop.
+    for (int i = 0; i < no->filhos.size(); ++i) {
+      if (no->filhos[i] != NULL) {
+        cerr << "  -> Programa filho " << i << " = " << no->filhos[i]->simb << " regra=" << no->filhos[i]->regra << "\n";
+      }
+      Funcao* nested = extrai_funcao(no->filhos[i]);
+      if (nested != NULL) {
+        return nested;
+      }
+    }
+    // Caso não haja funções internas, retornamos o procedimento principal como função de entrada.
+    cerr << "  -> Encontrou Programa (regra 1), retornando procedure main" << endl;
     Funcao* res = new Funcao();
     res->tipo_retorno = NULL;
     res->nome_funcao = ID::extrai_ID(no->filhos[2]);
@@ -22,8 +33,8 @@
     return res;
   }
   
-  // DeclFunc can appear with regra 32 or 33
-  if (no->simb == "DeclFunc" && (no->regra == 32 || no->regra == 33)) {
+  // DeclFunc parser rule is actual line 33 -> regra 32
+  if (no->simb == "DeclFunc" && no->regra == 32) {
     cerr << "  -> Encontrou DeclFunc (regra " << no->regra << "), extraindo..." << endl;
     if (no->filhos.size() >= 9) {
       // DeclFunc structure: FUNCTION ID ParametrosFunc RETURN Acesso IS ListaDeclaracoes BEGIN ListaComandos END ID PONTO_VIRGULA
