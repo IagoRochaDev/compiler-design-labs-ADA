@@ -41,8 +41,9 @@ Tipo* Tipo::extrai_Tipo(No_arv_parse* no) {
 
 Tipo* Tipo::extrai_tipo_literal(No_arv_parse* no) {
   if (no == NULL) return NULL;
-  if (no->simb == "DEC_VAL") return new Tipo(INT);
-  if (no->simb == "FLOAT_VAL") return new Tipo(FLOAT);
+  // CORRIGIDO: Nomes dos tokens gerados pelo seu Lexer e Gramática!
+  if (no->simb == "NUM_INT") return new Tipo(INT);
+  if (no->simb == "NUM_DEC") return new Tipo(FLOAT);
   if (no->simb == "BOOL_VAL") return new Tipo(BOOL);
   return NULL;
 }

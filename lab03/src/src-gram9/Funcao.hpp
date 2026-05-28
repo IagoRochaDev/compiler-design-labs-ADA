@@ -1,6 +1,6 @@
 #ifndef _FUNCAO_HPP_
 #define _FUNCAO_HPP_
-#include<vector>
+#include <vector>
 #include "ID.hpp"
 #include "Variavel.hpp"
 #include "Comando.hpp"
@@ -17,6 +17,8 @@ public:
   ID* nome_funcao;
   vector<Variavel*> parametros;
   vector<Comando*> comandos;
+  // NOVO: Vetor para armazenar as variáveis locais (ex: resultado)
+  vector<Variavel*> variaveis_locais; 
 
   Funcao();
   static Funcao* extrai_funcao(No_arv_parse *arv);
