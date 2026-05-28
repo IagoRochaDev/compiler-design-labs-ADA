@@ -74,7 +74,7 @@ javacc compil-lab1-solucao-a-iago-rocha.jj
 javac *.java
 
 # Executar o AnalisadorAda 
-java AnalisadorAda < compil-lab1-amostra-b-iago-rocha.adb
+java AnalisadorAda nome_arquivo.adb
 
 ```
 
