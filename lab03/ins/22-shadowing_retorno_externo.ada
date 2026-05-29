@@ -4,14 +4,11 @@ end main;
 
 function sombra_externo return Integer is
   x : Integer;
+  x_interno : Integer;
 begin
   x := 5;
   if x > 0 then
-    declare
-      x : Integer;
-    begin
-      x := 10;
-    end;
+    x_interno := 10;
   end if;
   return x;
 end sombra_externo;

@@ -3,14 +3,11 @@ begin
 end main;
 
 function sombra_param (n : Integer) return Integer is
+  n_interno : Integer;
 begin
   if n > 0 then
-    declare
-      n : Integer;
-    begin
-      n := n * 2;
-      return n;
-    end;
+    n_interno := n * 2;
+    return n_interno;
   end if;
   return n;
 end sombra_param;
