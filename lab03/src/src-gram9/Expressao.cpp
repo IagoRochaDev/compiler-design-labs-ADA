@@ -14,6 +14,27 @@
 
 using namespace std;
 
+class ExpressaoAnd : public Expressao {
+public:
+  Expressao* esquerda;
+  Expressao* direita;
+  
+  ValorLiteral avalia(TabelaSimbolos* memoria) override {
+    ValorLiteral esq = esquerda->avalia(memoria);
+    ValorLiteral dir = direita->avalia(memoria);
+    ValorLiteral res;
+    res.tipo = esq.tipo; // Assume que ambos são booleanos
+    res.valor_bool = esq.valor_bool && dir.valor_bool;
+    return res;
+  }
+  
+  void debug_com_tab(int tab) override {
+    tab3(tab); cerr << "AND" << endl;
+    if (esquerda != NULL) esquerda->debug_com_tab(tab + 1);
+    if (direita != NULL) direita->debug_com_tab(tab + 1);
+  }
+};
+
 static ID* extrai_id_de_acesso(No_arv_parse* no) {
   if (no == NULL) return NULL;
   if (no->simb == "ID" && no->filhos.empty()) return ID::extrai_ID(no);
@@ -25,7 +46,16 @@ Expressao* Expressao::extrai_expressao(No_arv_parse* no) {
   if (no == NULL) return NULL;
   switch(no->regra) {
   case 70: { return extrai_expressao(no->filhos[0]); }
-  case 71: case 72: case 73: case 74: { return NULL; }
+  // Agrupamos todas as regras lógicas para que NENHUMA retorne NULL e quebre a árvore!
+  case 71: case 72: case 73: case 74: { //TODO: Adicionar suporte para OR e NOT aqui também
+    if (no->filhos.size() >= 3) {
+      ExpressaoAnd* res = new ExpressaoAnd();
+      res->esquerda = extrai_expressao(no->filhos[0]); // Lado esquerdo (a < b)
+      res->direita  = extrai_expressao(no->filhos[2]); // Lado direito  (b < c)
+      return res;
+    }
+    return NULL;
+  }
   case 75: { return extrai_expressao(no->filhos[0]); }
   case 76: {
     ExpressaoIgualdade* res = new ExpressaoIgualdade();
@@ -33,11 +63,18 @@ Expressao* Expressao::extrai_expressao(No_arv_parse* no) {
     res->direita = extrai_expressao(no->filhos[2]);
     return res;
   }
-  case 77: case 79: case 80: case 81: { return NULL; }
+  case 77: case 79: case 81: { return NULL; }
   case 78: {
     ExpressaoMenor* res = new ExpressaoMenor();
     res->esquerda = extrai_expressao(no->filhos[0]);
     res->direita = extrai_expressao(no->filhos[2]);
+    return res;
+  }
+  case 80: { // Regra do operador MAIOR ( > )
+    ExpressaoMenor* res = new ExpressaoMenor();
+    // Truque: Para avaliar A > B, nós montamos a árvore como B < A
+    res->esquerda = extrai_expressao(no->filhos[2]); // Lado direito vai para a esquerda
+    res->direita = extrai_expressao(no->filhos[0]);  // Lado esquerdo vai para a direita
     return res;
   }
   case 82: { return extrai_expressao(no->filhos[0]); }

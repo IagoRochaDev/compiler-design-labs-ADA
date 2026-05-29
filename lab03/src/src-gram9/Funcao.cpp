@@ -95,23 +95,30 @@ Funcao* Funcao::extrai_funcao(No_arv_parse *no) {
     return res;
   }
   
-  if (no->simb == "DeclFunc" && no->regra == 32) {
-    cerr << "  -> Encontrou DeclFunc (regra " << no->regra << "), extraindo..." << endl;
-    if (no->filhos.size() >= 9) {
-      Funcao* res = new Funcao();
-      res->tipo_retorno = Tipo::extrai_Tipo(no->filhos[4]);
-      res->nome_funcao = ID::extrai_ID(no->filhos[1]);
-      res->parametros = Variavel::extrai_lista_parametros(no->filhos[2]);
-      
-      // CORREÇÃO: Mapeia e extrai a variável "resultado" da ListaDeclaracoes (índice 6)
-      res->variaveis_locais = extrai_lista_declaracoes_locais(no->filhos[6]);
-      
-      res->comandos = Comando::extrai_lista_comandos(no->filhos[8]);
-      cerr << "  -> DeclFunc extraido com sucesso" << endl;
-      return res;
-    } else {
-      cerr << "  -> DeclFunc com tamanho insuficiente (" << no->filhos.size() << " filhos)" << endl;
+  if (no->simb == "DeclFunc") {
+    cerr << "  -> Encontrou DeclFunc, extraindo dinamicamente..." << endl;
+    Funcao* res = new Funcao();
+    
+    // A nossa fantástica função já extrai variáveis locais e de blocos aninhados!
+    res->variaveis_locais = extrai_lista_declaracoes_locais(no);
+    
+    // Varre os filhos dinamicamente para encontrar os pedaços da função
+    for (size_t i = 0; i < no->filhos.size(); ++i) {
+        No_arv_parse* filho = no->filhos[i];
+        if (filho == NULL) continue;
+        
+        // Pega o PRIMEIRO ID que encontrar (o nome da função)
+        if (filho->simb == "ID" && res->nome_funcao == NULL) {
+            res->nome_funcao = ID::extrai_ID(filho);
+        } else if (filho->simb == "ParametrosFunc") {
+            res->parametros = Variavel::extrai_lista_parametros(filho);
+        } else if (filho->simb == "Acesso" || filho->simb == "TipoVar") {
+            res->tipo_retorno = Tipo::extrai_Tipo(filho);
+        } else if (filho->simb == "ListaComandos") {
+            res->comandos = Comando::extrai_lista_comandos(filho);
+        }
     }
+    return res;
   }
 
   for (int i = 0; i < no->filhos.size(); ++i) {
