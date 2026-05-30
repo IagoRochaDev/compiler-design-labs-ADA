@@ -64,9 +64,9 @@ cd lab02-parser-lr
 cd lab03-analisador-semantico
 # Compila e executa injetando uma árvore de tokens de teste(exemplo)
 make run < ins/0-retorna_soma_int.tokens
+# Consulte o README.md do diretório para testar passando seus próprios parâmetros
 ```
 
-# Consulte o README.md do diretório para testar passando seus próprios parâmetros
 
 ## 👨‍💻 Autoria
 
