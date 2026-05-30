@@ -7,6 +7,7 @@ BUILD_DIR := build
 GRAM_DIR := src/src-gram$(GRAM)
 GRAM_FILE ?= gramatica-$(GRAM)/gramatica-$(GRAM).site
 TABELA_FILE ?= gramatica-$(GRAM)/tabela_lr1.conf
+PARAMS ?=
 
 CORE_SRCS := \
 	src/sol.cpp \
@@ -34,7 +35,7 @@ $(BUILD_DIR)/%.o: %.cpp
 	$(CXX) $(CXXFLAGS) -I$(GRAM_DIR) -Isrc -MMD -MP -c $< -o $@
 
 run: $(TARGET)
-	./$(TARGET) $(GRAM_FILE) $(TABELA_FILE)
+	./$(TARGET) $(GRAM_FILE) $(TABELA_FILE) $(PARAMS)
 
 clean:
 	rm -rf $(BUILD_DIR) $(TARGET)

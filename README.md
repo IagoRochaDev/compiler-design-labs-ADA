@@ -30,7 +30,11 @@ compiler-design-labs-ADA/
 │   ├── bin/                           # Executáveis
 │   ├── exemplos/                      # Exemplos de gramáticas
 │   └── lab02.pdf                      # Especificação
-└── lab03/                             # Análise semântica
+└── lab03-analisador-semantico/        #Análise semântica e Interpretação
+    ├── README.md                      # Documentação de arquitetura e execução
+    ├── Makefile                       # Automação de compilação
+    ├── src/                           # Implementação principal em C++
+    ├── ins/                           # Entradas de teste (.tokens)
     └── lab03.pdf                      # Especificação
 ```
 
@@ -42,6 +46,7 @@ compiler-design-labs-ADA/
   - Linux/WSL: nativo
 - **Compilador ADA**: GNAT (para Lab 01)
 - **Gerador de Tabelas**: JSMachines (opcional, para Lab 02)
+- **GNU Make: Utilitário para automação de builds (para Lab 03)
 
 ### Lab 01 - Analisador Léxico
 ```bash
@@ -54,6 +59,14 @@ cd lab01-analisador-lexico
 cd lab02-parser-lr
 # Consulte README.md para instruções de compilação e execução
 ```
+### Lab 03 - Interpretador e Analisador Semântico
+```bash
+cd lab03-analisador-semantico
+# Compila e executa injetando uma árvore de tokens de teste(exemplo)
+make run < ins/0-retorna_soma_int.tokens
+```
+
+# Consulte o README.md do diretório para testar passando seus próprios parâmetros
 
 ## 👨‍💻 Autoria
 
@@ -76,4 +89,4 @@ Desenvolvido com fins acadêmicos na instituição IFNMG - Campus Montes Claros.
 
 ---
 
-**Última atualização:** 2026-05-18
+**Última atualização:** 2026-05-30
