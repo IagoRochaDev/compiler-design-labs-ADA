@@ -2,12 +2,18 @@ procedure main is
 begin
 end main;
 
-function sombra_param (n : Integer) return Integer is
-  n_interno : Integer;
+function sombra_parametro (X : Integer) return Integer is
+   Acum : Integer;
 begin
-  if n > 0 then
-    n_interno := n * 2;
-    return n_interno;
-  end if;
-  return n;
-end sombra_param;
+   Acum := X * 2;
+   
+   declare
+      X : Integer;
+      Resultado : Integer;
+   begin
+      X := Acum + 9;
+      Resultado := X * X;
+      return Resultado;
+   end;
+   
+end sombra_parametro;

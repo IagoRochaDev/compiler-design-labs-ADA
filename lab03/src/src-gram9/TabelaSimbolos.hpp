@@ -1,18 +1,27 @@
 #ifndef _TABELA_SIMBOLOS_HPP_
 #define _TABELA_SIMBOLOS_HPP_
+
+#include "Variavel.hpp"
+#include "ValorLiteral.hpp"
 #include <map>
 #include <string>
 #include <vector>
-#include "Variavel.hpp"
-#include "ValorLiteral.hpp"
+
 using namespace std;
 
 class TabelaSimbolos {
 public:
   map<string, Variavel*> variaveis;
+  
+  // NOVO: Ponteiro para a tabela do escopo externo
+  TabelaSimbolos* pai; 
+  
   ValorLiteral ultimo_valor_atribuido;
 
   TabelaSimbolos();
+  // NOVO: Construtor que recebe a tabela pai
+  TabelaSimbolos(TabelaSimbolos* pai); 
+  
   ~TabelaSimbolos();
 
   bool adiciona(Variavel* variavel);

@@ -3,7 +3,14 @@
 #include <sstream>
 #include <algorithm>
 
+// Construtor original (Escopo Global)
 TabelaSimbolos::TabelaSimbolos() {
+  pai = NULL;
+}
+
+// NOVO: Construtor para blocos internos (DECLARE)
+TabelaSimbolos::TabelaSimbolos(TabelaSimbolos* pai) {
+  this->pai = pai;
 }
 
 TabelaSimbolos::~TabelaSimbolos() {
@@ -15,18 +22,35 @@ TabelaSimbolos::~TabelaSimbolos() {
 bool TabelaSimbolos::adiciona(Variavel* variavel) {
   if (variavel == NULL || variavel->nome == NULL) return false;
   string nome = variavel->nome->nome;
-  if (variaveis.count(nome)) return false;
+  
+  // Verifica apenas no escopo atual! Se já existir no pai, tudo bem, 
+  // nós vamos sombrear (shadowing).
+  if (variaveis.count(nome)) return false; 
+  
   variaveis[nome] = variavel->clone();
   return true;
 }
 
+// MODIFICADO: Agora faz a busca em cascata (escopo local -> escopo pai)
 Variavel* TabelaSimbolos::busca(const string& nome) const {
   auto it = variaveis.find(nome);
-  if (it == variaveis.end()) return NULL;
-  return it->second;
+  
+  // Achou no escopo atual? Retorna.
+  if (it != variaveis.end()) {
+    return it->second;
+  }
+  
+  // Não achou? Se tiver um escopo pai, procura lá.
+  if (pai != NULL) {
+    return pai->busca(nome);
+  }
+  
+  // Se não achou e não tem pai, a variável não existe.
+  return NULL;
 }
 
 bool TabelaSimbolos::atribuir(const string& nome, const ValorLiteral& valor) {
+  // O busca() já faz o trabalho de achar a variável certa (local ou externa)
   Variavel* var = busca(nome);
   if (var == NULL) return false;
   var->atribuir(valor);
