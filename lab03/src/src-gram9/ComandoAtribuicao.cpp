@@ -15,10 +15,33 @@ bool ComandoAtribuicao::executa(TabelaSimbolos* memoria) {
   if (direita == NULL) {
     throw runtime_error("Expressao de atribuicao ausente");
   }
+  
+  // 1. Avalia o lado direito primeiro
   ValorLiteral valor = direita->avalia(memoria);
+
+  // --- TRAVA DE SEGURANÇA SEMÂNTICA ---
+  // Tente buscar a variável na memória para inspecionar o tipo dela antes de atribuir.
+  // ATENÇÃO: Ajuste 'busca_variavel' para o método real que sua TabelaSimbolos usa!
+  /*
+  Variavel* var_destino = memoria->busca_variavel(esquerda->nome);
+  if (var_destino != NULL && var_destino->tipo != NULL && valor.tipo != NULL) {
+      string tipo_destino = var_destino->tipo->nome();
+      string tipo_valor = valor.tipo->nome();
+
+      if (tipo_destino != tipo_valor) {
+          throw runtime_error("Erro Semantico: Variavel '" + esquerda->nome + 
+                              "' e do tipo " + tipo_destino + 
+                              ", mas recebeu um valor do tipo " + tipo_valor);
+      }
+  }
+  */
+  // ------------------------------------
+
+  // 2. Faz a atribuição real na memória
   if (!memoria->atribuir(esquerda->nome, valor)) {
     throw runtime_error(string("Variavel nao declarada: ") + esquerda->nome);
   }
+  
   return true;
 }
 

@@ -53,6 +53,19 @@ bool TabelaSimbolos::atribuir(const string& nome, const ValorLiteral& valor) {
   // O busca() já faz o trabalho de achar a variável certa (local ou externa)
   Variavel* var = busca(nome);
   if (var == NULL) return false;
+
+  // --- TRAVA DE SEGURANÇA SEMÂNTICA (NOVO) ---
+  if (var->tipo != NULL && valor.tipo != NULL) {
+    string tipo_variavel = var->tipo->nome();
+    string tipo_valor = valor.tipo->nome();
+
+    if (tipo_variavel != tipo_valor) {
+      throw runtime_error("Erro Semantico: Tentativa de atribuir valor do tipo " + tipo_valor + 
+                          " a variavel '" + nome + "' que e do tipo " + tipo_variavel);
+    }
+  }
+  // -------------------------------------------
+
   var->atribuir(valor);
   ultimo_valor_atribuido = var->get_valor();
   return true;

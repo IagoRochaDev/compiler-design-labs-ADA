@@ -74,6 +74,10 @@ int main(int argc, char * argv[]) {
 
   Analisador ana;
   cout << "Retorno calculado:" << endl;
-  cout << ana.calcula_retorno(func, parametros_passados).como_string() << endl;
-  return 0;
+  try {
+    cout << ana.calcula_retorno(func, parametros_passados).como_string() << endl;
+  } catch (const runtime_error& erro) {
+    cerr << "\n[Erro em Tempo de Execucao]: " << erro.what() << endl;
+    return 1; // Sai com código de erro, mas sem dar Core Dump
+  }
 }
