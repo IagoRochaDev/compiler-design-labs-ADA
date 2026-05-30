@@ -13,7 +13,7 @@ Cada laboratório representa uma fase distinta na construção do compilador:
 |------------|-----------|-----------|
 | **Lab 01** | Analisador Léxico (Tokenização) | ADA / JavaCC |
 | **Lab 02** | Analisador Sintático (Parser LR) | C++ |
-| **Lab 03** | Análise Semântica e Geração de Código | *em desenvolvimento* |
+| **Lab 03** | Análise Semântica e Geração de Código | C++ |
 
 ## 📂 Estrutura do Repositório
 
