@@ -11,7 +11,7 @@
 #include <iostream>
 #include "../debug-util.hpp"
 
-// Helper estático para extrair as declarações do bloco DECLARE
+
 static vector<Variavel*> extrai_lista_declaracoes_locais_cmd(No_arv_parse* no) {
   vector<Variavel*> res;
   if (no == NULL) return res;
@@ -75,15 +75,15 @@ static ID* extrai_id_de_acesso(No_arv_parse* no) {
 static void extrai_fim_if(No_arv_parse* no, ComandoIf* if_node) {
   if (no == NULL || no->filhos.empty()) return;
   
-  // Inspeciona o símbolo do primeiro filho para descobrir qual é o fluxo
+  
   string token = no->filhos[0]->simb;
 
   if (token == "END" || no->filhos.size() == 3) { 
-    // FimIf -> END IF PONTO_VIRGULA
+    
     return;
   }
   else if (token == "ELSIF") { 
-    // FimIf -> ELSIF Expressao THEN ListaComandos FimIf
+    
     ComandoIf* elsif_node = new ComandoIf();
     elsif_node->condicao = Expressao::extrai_expressao(no->filhos[1]);
     elsif_node->comandos_then = Comando::extrai_lista_comandos(no->filhos[3]);
@@ -92,14 +92,14 @@ static void extrai_fim_if(No_arv_parse* no, ComandoIf* if_node) {
     return;
   }
   else if (token == "ELSE") { 
-    // FimIf -> ELSE ListaComandos END IF PONTO_VIRGULA
+    
     if_node->comandos_else = Comando::extrai_lista_comandos(no->filhos[1]);
     return;
   }
 }
 
 vector<Comando*> Comando::extrai_lista_comandos(No_arv_parse* no) {
-  // ListaComandos -> vazio (em vez de checar regra == 11, checamos se não há filhos)
+  
   if (no == NULL || no->filhos.empty()) return vector<Comando*>(); 
   
   vector<Comando*> res = extrai_lista_comandos(no->filhos[0]);
@@ -114,12 +114,12 @@ vector<Comando*> Comando::extrai_lista_comandos(No_arv_parse* no) {
 Comando* Comando::extrai_comando(No_arv_parse* no) {
   if (no == NULL) return NULL;
   
-  // Desce na árvore caso seja apenas uma derivação unitária
+  
   if (no->simb == "Comando" && no->filhos.size() == 1) {
     return extrai_comando(no->filhos[0]);
   }
 
-  // --- Mapeamento Total por Nomes de Símbolos ---
+  
 
   if (no->simb == "ComandoDeclare" || no->simb == "Declare") {
     ComandoDeclare* res = new ComandoDeclare();
@@ -136,7 +136,7 @@ Comando* Comando::extrai_comando(No_arv_parse* no) {
     return res;
   } 
   
-  else if (no->simb == "ComandoIf") { // IF Expressao THEN ListaComandos FimIf
+  else if (no->simb == "ComandoIf") { 
     ComandoIf* res = new ComandoIf();
     res->condicao = Expressao::extrai_expressao(no->filhos[1]);
     res->comandos_then = extrai_lista_comandos(no->filhos[3]);
@@ -144,7 +144,7 @@ Comando* Comando::extrai_comando(No_arv_parse* no) {
     return res;
   } 
   
-  else if (no->simb == "ComandoWhile") { // WHILE Expressao LOOP ListaComandos END LOOP PONTO_VIRGULA
+  else if (no->simb == "ComandoWhile") { 
     ComandoWhile* res = new ComandoWhile();
     res->condicao = Expressao::extrai_expressao(no->filhos[1]);
     res->comandos = extrai_lista_comandos(no->filhos[3]);
@@ -153,7 +153,7 @@ Comando* Comando::extrai_comando(No_arv_parse* no) {
   
   else if (no->simb == "ComandoReturn") { 
     ComandoRetorno* res = new ComandoRetorno();
-    // Avalia o tamanho dos filhos para saber se tem expressão ou se é apenas "RETURN ;"
+    
     if (no->filhos.size() > 2) { 
       res->expressao = Expressao::extrai_expressao(no->filhos[1]);
     } else { 
@@ -162,7 +162,7 @@ Comando* Comando::extrai_comando(No_arv_parse* no) {
     return res;
   } 
   
-  else if (no->simb == "ComandoAtribuicao") { // Acesso ATRIBUICAO Expressao PONTO_VIRGULA
+  else if (no->simb == "ComandoAtribuicao") { 
     ComandoAtribuicao* res = new ComandoAtribuicao();
     res->esquerda = extrai_id_de_acesso(no->filhos[0]);
     res->direita = Expressao::extrai_expressao(no->filhos[2]);

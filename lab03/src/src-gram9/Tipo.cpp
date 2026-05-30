@@ -31,7 +31,7 @@ Tipo* tipo_por_nome(string nome) {
 }
 
 Tipo* Tipo::extrai_Tipo(No_arv_parse* no) {
-  // Tipo -> INT | BOOLEAN | FLOAT
+  
   if (no == NULL) return NULL;
   No_arv_parse* terminal = no;
   if (!no->filhos.empty()) terminal = no->filhos[0];
@@ -41,7 +41,7 @@ Tipo* Tipo::extrai_Tipo(No_arv_parse* no) {
 
 Tipo* Tipo::extrai_tipo_literal(No_arv_parse* no) {
   if (no == NULL) return NULL;
-  // CORRIGIDO: Nomes dos tokens gerados pelo seu Lexer e Gramática!
+  
   if (no->simb == "NUM_INT") return new Tipo(INT);
   if (no->simb == "NUM_DEC") return new Tipo(FLOAT);
   if (no->simb == "BOOL_VAL") return new Tipo(BOOL);

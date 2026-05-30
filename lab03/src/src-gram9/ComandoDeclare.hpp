@@ -9,10 +9,10 @@ using namespace std;
 
 class ComandoDeclare : public Comando {
 public:
-  // Variáveis locais exclusivas deste bloco declare
+  
   vector<Variavel*> declaracoes; 
   
-  // Comandos que vão rodar dentro do begin...end do declare
+  
   vector<Comando*> comandos;     
 
   ComandoDeclare();

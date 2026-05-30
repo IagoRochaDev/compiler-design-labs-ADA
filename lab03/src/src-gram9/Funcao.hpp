@@ -17,7 +17,7 @@ public:
   ID* nome_funcao;
   vector<Variavel*> parametros;
   vector<Comando*> comandos;
-  // NOVO: Vetor para armazenar as variáveis locais (ex: resultado)
+  
   vector<Variavel*> variaveis_locais; 
 
   Funcao();

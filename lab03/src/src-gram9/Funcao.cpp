@@ -7,17 +7,17 @@
 Funcao::Funcao() {
 }
 
-// NOVO: Função estática auxiliar para varrer a árvore e extrair a "ListaDeclaracoes"
+
 static vector<Variavel*> extrai_lista_declaracoes_locais(No_arv_parse* no) {
   vector<Variavel*> res;
   if (no == NULL) return res;
 
-  // Se encontramos o nó de declaração de variável
+  
   if (no->simb == "DeclVar") {
-    // DeclVar -> ListaIds DOIS_PONTOS TipoVar ...
+    
     No_arv_parse* no_lista_ids = no->filhos[0];
     
-    // Helper local para extrair de forma limpa os IDs da ListaIds
+    
     struct Helper {
       static void coletar_ids(No_arv_parse* n, vector<ID*>& ids) {
         if (n == NULL) return;
@@ -26,9 +26,9 @@ static vector<Variavel*> extrai_lista_declaracoes_locais(No_arv_parse* no) {
           return;
         }
         if (n->simb == "ListaIds") {
-          if (n->filhos.size() == 1) { // ListaIds -> ID
+          if (n->filhos.size() == 1) { 
             ids.push_back(ID::extrai_ID(n->filhos[0]));
-          } else if (n->filhos.size() == 3) { // ListaIds -> ListaIds VIRGULA ID
+          } else if (n->filhos.size() == 3) { 
             coletar_ids(n->filhos[0], ids);
             ids.push_back(ID::extrai_ID(n->filhos[2]));
           }
@@ -39,11 +39,11 @@ static vector<Variavel*> extrai_lista_declaracoes_locais(No_arv_parse* no) {
     vector<ID*> ids;
     Helper::coletar_ids(no_lista_ids, ids);
 
-    // Extrai o Tipo correto lidando com a regra intermediária TipoVar -> Acesso
+    
     Tipo* tipo = NULL;
     if (no->filhos.size() >= 3 && no->filhos[2] != NULL) {
       No_arv_parse* no_tipo_var = no->filhos[2];
-      // Se o primeiro filho for "Acesso", enviamos o Acesso para o Tipo extrair o ID interno
+      
       if (!no_tipo_var->filhos.empty() && no_tipo_var->filhos[0]->simb == "Acesso") {
         tipo = Tipo::extrai_Tipo(no_tipo_var->filhos[0]);
       } else {
@@ -51,7 +51,7 @@ static vector<Variavel*> extrai_lista_declaracoes_locais(No_arv_parse* no) {
       }
     }
 
-    // Instancia as variáveis locais encontradas
+    
     for (ID* id : ids) {
       if (id != NULL) {
         res.push_back(new Variavel(id, tipo));
@@ -60,7 +60,7 @@ static vector<Variavel*> extrai_lista_declaracoes_locais(No_arv_parse* no) {
     return res;
   }
 
-  // Caminha recursivamente por toda a árvore de ListaDeclaracoes
+  
   for (size_t i = 0; i < no->filhos.size(); ++i) {
     vector<Variavel*> do_filho = extrai_lista_declaracoes_locais(no->filhos[i]);
     res.insert(res.end(), do_filho.begin(), do_filho.end());
@@ -74,7 +74,7 @@ Funcao* Funcao::extrai_funcao(No_arv_parse *no) {
   cerr << "DEBUG extrai_funcao: regra=" << no->regra << " simb=" << no->simb << " filhos=" << no->filhos.size() << endl;
 
   if (no->simb == "Programa" && no->regra == 1) { 
-    // Procura por funções internas declaradas no escopo do programa principal
+    
     for (int i = 0; i < no->filhos.size(); ++i) {
       if (no->filhos[i] != NULL) {
         cerr << "  -> Programa filho " << i << " = " << no->filhos[i]->simb << " regra=" << no->filhos[i]->regra << "\n";
@@ -89,7 +89,7 @@ Funcao* Funcao::extrai_funcao(No_arv_parse *no) {
     res->tipo_retorno = NULL;
     res->nome_funcao = ID::extrai_ID(no->filhos[2]);
     res->parametros = vector<Variavel*>();
-    // CORREÇÃO: Extrai também as variáveis locais do procedimento principal (índice 4)
+    
     res->variaveis_locais = extrai_lista_declaracoes_locais(no->filhos[4]);
     res->comandos = Comando::extrai_lista_comandos(no->filhos[6]);
     return res;
@@ -99,15 +99,15 @@ Funcao* Funcao::extrai_funcao(No_arv_parse *no) {
     cerr << "  -> Encontrou DeclFunc, extraindo dinamicamente..." << endl;
     Funcao* res = new Funcao();
     
-    // A nossa fantástica função já extrai variáveis locais e de blocos aninhados!
+    
     res->variaveis_locais = extrai_lista_declaracoes_locais(no);
     
-    // Varre os filhos dinamicamente para encontrar os pedaços da função
+    
     for (size_t i = 0; i < no->filhos.size(); ++i) {
         No_arv_parse* filho = no->filhos[i];
         if (filho == NULL) continue;
         
-        // Pega o PRIMEIRO ID que encontrar (o nome da função)
+        
         if (filho->simb == "ID" && res->nome_funcao == NULL) {
             res->nome_funcao = ID::extrai_ID(filho);
         } else if (filho->simb == "ParametrosFunc") {
@@ -133,10 +133,10 @@ Funcao* Funcao::extrai_funcao(No_arv_parse *no) {
 }
 
 TabelaSimbolos* Funcao::cria_memoria_execucao(const vector<ValorLiteral>& valores) const {
-  // Inicializa a tabela contendo os parâmetros recebidos (a e b)
+  
   TabelaSimbolos* tabela = TabelaSimbolos::cria_com_parametros(parametros, valores);
   
-  // CORREÇÃO: Registra e aloca espaço para cada variável local na memória antes da execução
+  
   for (Variavel* var_local : variaveis_locais) {
     tabela->adiciona(var_local);
   }
@@ -172,7 +172,7 @@ void Funcao::debug() {
   }
   cerr << ") { " << endl;
   
-  // Imprime também no debug as variáveis locais encontradas
+  
   for (size_t i_var = 0; i_var < variaveis_locais.size(); ++i_var) {
     if (variaveis_locais[i_var] != NULL) {
       variaveis_locais[i_var]->debug_com_tab(2);

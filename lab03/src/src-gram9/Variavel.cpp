@@ -70,7 +70,7 @@ Tipo* Variavel::get_tipo() const {
 
 static vector<ID*> extrai_lista_ids(No_arv_parse* no) {
   if (no == NULL) return vector<ID*>();
-  if (no->regra == 21) { // ListaIds -> ID
+  if (no->regra == 21) { 
     return vector<ID*>{ ID::extrai_ID(no->filhos[0]) };
   }
   vector<ID*> res = extrai_lista_ids(no->filhos[0]);
@@ -90,7 +90,7 @@ static vector<Variavel*> extrai_variaveis_parametro(No_arv_parse* no) {
 }
 
 vector<Variavel*> Variavel::extrai_lista_nao_vazia_parametros(No_arv_parse* no) {
-  // ListaParams. 36) ListaParams -> Parametro  35) ListaParams -> ListaParams PONTO_VIRGULA Parametro
+  
   if (no->regra == 36) {
     return extrai_variaveis_parametro(no->filhos[0]);
   }
@@ -101,14 +101,14 @@ vector<Variavel*> Variavel::extrai_lista_nao_vazia_parametros(No_arv_parse* no) 
 }
 
 vector<Variavel *> Variavel::extrai_lista_parametros(No_arv_parse* no) {
-  // ParametrosFunc. 34) ParametrosFunc ->  33) ParametrosFunc -> ABRE_PARENTESES ListaParams FECHA_PARENTESES
+  
   if (no->regra == 34) return vector<Variavel*>();
   return extrai_lista_nao_vazia_parametros(no->filhos[1]);
 }
 
 Variavel* Variavel::extrai_variavel_P(No_arv_parse* no) {
   Variavel* res = new Variavel();
-  // Esta funcao não e usada diretamente pela gramática Ada atual.
+  
   res->tipo = Tipo::extrai_Tipo(no->filhos[0]);
   res->nome = ID::extrai_ID(no->filhos[1]);
   return res;

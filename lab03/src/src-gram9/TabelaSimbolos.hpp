@@ -13,13 +13,13 @@ class TabelaSimbolos {
 public:
   map<string, Variavel*> variaveis;
   
-  // NOVO: Ponteiro para a tabela do escopo externo
+  
   TabelaSimbolos* pai; 
   
   ValorLiteral ultimo_valor_atribuido;
 
   TabelaSimbolos();
-  // NOVO: Construtor que recebe a tabela pai
+  
   TabelaSimbolos(TabelaSimbolos* pai); 
   
   ~TabelaSimbolos();
