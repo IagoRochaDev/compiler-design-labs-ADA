@@ -7,7 +7,7 @@ using namespace std;
 
 ExpressaoValor::ExpressaoValor() { }
 
-ValorLiteral ExpressaoValor::avalia(TabelaSimbolos* /*memoria*/) {
+ValorLiteral ExpressaoValor::avalia(TabelaSimbolos* ) {
   if (valor == NULL || valor->tipo == NULL) {
     throw runtime_error("Valor literal invalido");
   }
