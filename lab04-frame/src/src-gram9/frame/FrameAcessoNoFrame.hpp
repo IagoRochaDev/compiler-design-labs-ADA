@@ -6,7 +6,7 @@ public:
   int posicao_no_frame;
   // Acesso sera FP+posicao_no_frame. Exemplos
   // posicao_no_frame=-40, -48, -56, etc.
-  FrameAcessoNoFrame();
+  FrameAcessoNoFrame(int posicao) : posicao_no_frame(posicao) {}
 };
 
 #endif

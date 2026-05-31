@@ -15,8 +15,7 @@ using namespace std;
 #include "Funcao.hpp"
 #include "Analisador.hpp"
 #include "TabelaSimbolos.hpp"
-// INCLUDE NOVO PARA O LAB 04
-#include "FrameFuncao.hpp" 
+#include "src-gram9/frame/FrameFuncao.hpp" 
 
 int main(int argc, char * argv[]) {
   if (argc != 3 && argc != 1 && argc != 4) {
@@ -59,7 +58,7 @@ int main(int argc, char * argv[]) {
   func->debug();
   
   // =======================================================
-  // INÍCIO DA EXECUÇÃO DO LAB 04 (LAYOUT DO FRAME)
+  // EXECUÇÃO DO LAB 04 (LAYOUT DO FRAME)
   // =======================================================
   cout << "\n--- Gerando Layout do Frame (Lab 04) ---" << endl;
   FrameFuncao* frame = FrameFuncao::gera_frame_de_funcao(func);

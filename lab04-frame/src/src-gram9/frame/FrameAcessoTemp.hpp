@@ -3,8 +3,8 @@
 
 class FrameAcessoTemp : public FrameAcesso {
 public:
-  int id; // id unico do pseudo-registrador/temporario.
-  FrameAcessoTemp();
+  int id;
+  FrameAcessoTemp(int id_registrador) : id(id_registrador) {}
 };
 
 #endif
