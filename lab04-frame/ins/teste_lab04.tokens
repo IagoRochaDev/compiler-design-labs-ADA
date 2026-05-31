@@ -48,7 +48,15 @@ ID sucesso
 DOIS_PONTOS :
 ID Integer
 PONTO_VIRGULA ;
+ID verificar
+DOIS_PONTOS :
+ID Integer
+PONTO_VIRGULA ;
 BEGIN begin
+ID verificar
+ATRIBUICAO :=
+NUM_INT 99
+PONTO_VIRGULA ;
 ID sucesso
 ATRIBUICAO :=
 ID verificar

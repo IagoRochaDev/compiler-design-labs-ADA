@@ -39,6 +39,10 @@ private:
   void coletar_variaveis_de_expressao(Expressao *exp);
 
   void calcular_layout(Funcao *fun);
+
+  void aplicar_acessos_comandos(const vector<Comando *> &comandos);
+  void aplicar_acessos_comando(Comando *cmd);
+  void aplicar_acessos_expressao(Expressao *exp);
 };
 
 #endif
