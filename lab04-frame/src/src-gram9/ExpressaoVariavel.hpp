@@ -1,15 +1,21 @@
 #ifndef _EXPRESSAO_VARIAVEL_HPP_
 #define _EXPRESSAO_VARIAVEL_HPP_
+
 #include "Expressao.hpp"
 #include "ID.hpp"
-using namespace std;
+#include "frame/FrameAcesso.hpp"
+#include <vector>
 
 class ExpressaoVariavel : public Expressao {
 public:
-  ID* nome;
-  ExpressaoVariavel();
-  void debug_com_tab(int tab);
-  ValorLiteral avalia(TabelaSimbolos* memoria);
+    ID* nome;
+
+    std::vector<Expressao*> argumentos; 
+    FrameAcesso* acesso_frame = nullptr; 
+
+    ExpressaoVariavel();
+    ValorLiteral avalia(TabelaSimbolos* memoria) override;
+    void debug_com_tab(int tab) override;
 };
 
 #endif

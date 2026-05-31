@@ -1,11 +1,11 @@
 #include <algorithm>
-#include<vector>
-#include<string>
-#include<iostream>
+#include <vector>
+#include <string>
+#include <iostream>
 #include <fstream>   
-#include<sstream>
-#include<map>
-#include<stack>
+#include <sstream>
+#include <map>
+#include <stack>
 using namespace std;
 
 #include "Gramatica.hpp"
@@ -15,7 +15,8 @@ using namespace std;
 #include "Funcao.hpp"
 #include "Analisador.hpp"
 #include "TabelaSimbolos.hpp"
-
+// INCLUDE NOVO PARA O LAB 04
+#include "FrameFuncao.hpp" 
 
 int main(int argc, char * argv[]) {
   if (argc != 3 && argc != 1 && argc != 4) {
@@ -42,19 +43,33 @@ int main(int argc, char * argv[]) {
     return 1;    
   }
   Parser parser(arq_gramatica, arq_tabela_lr1);
-  parser.tabela.debug();
-  parser.gram.debug();
+  // parser.tabela.debug(); // Comentado para poluir menos a tela
+  // parser.gram.debug();   // Comentado para poluir menos a tela
 
   
   Arvore_parse arv = parser.executa_parse(cin);
   cerr << "Parse executado" << endl;
-  arv.debug();
+  // arv.debug(); // Comentado para focar no Lab 4
+  
   Funcao* func = Funcao::extrai_funcao(arv.raiz);
   if (func == NULL) {
     cerr << "ERRO: Nenhuma funcao encontrada na arvore de parse" << endl;
     return 1;
   }
   func->debug();
+  
+  // =======================================================
+  // INÍCIO DA EXECUÇÃO DO LAB 04 (LAYOUT DO FRAME)
+  // =======================================================
+  cout << "\n--- Gerando Layout do Frame (Lab 04) ---" << endl;
+  FrameFuncao* frame = FrameFuncao::gera_frame_de_funcao(func);
+  if (frame != NULL) {
+      frame->imprimir();
+  }
+  cout << "----------------------------------------\n" << endl;
+  // =======================================================
+
+
   // Preparar parâmetros: aceita arquivo de parâmetros opcional
   vector<ValorLiteral> parametros_passados;
   if (!arquivo_params.empty()) {
@@ -78,6 +93,6 @@ int main(int argc, char * argv[]) {
     cout << ana.calcula_retorno(func, parametros_passados).como_string() << endl;
   } catch (const runtime_error& erro) {
     cerr << "\n[Erro em Tempo de Execucao]: " << erro.what() << endl;
-    return 1; // Sai com código de erro, mas sem dar Core Dump
+    return 1; 
   }
 }
