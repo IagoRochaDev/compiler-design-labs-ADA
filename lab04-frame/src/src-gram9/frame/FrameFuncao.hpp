@@ -1,6 +1,6 @@
 #ifndef _FRAME_FUNCAO_HPP_
 #define _FRAME_FUNCAO_HPP_
-#include "../src-gram5/Funcao.hpp"
+#include "../Funcao.hpp"
 using namespace std;
 
 class FrameFuncao {
@@ -13,6 +13,8 @@ public:
 
   FrameFuncao();
   static FrameFuncao* gera_frame_de_funcao(Funcao* fun);
+
+  void imprimir() const;
 };
 
 #endif

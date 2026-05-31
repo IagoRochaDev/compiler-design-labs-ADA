@@ -10,16 +10,18 @@ TABELA_FILE ?= gramatica-$(GRAM)/tabela_lr1.conf
 PARAMS ?=
 
 CORE_SRCS := \
-	src/sol.cpp \
-	src/Arvore.cpp \
-	src/Gramatica.cpp \
-	src/Parser.cpp \
-	src/TabelaLR1.cpp \
-	src/debug-util.cpp \
-	src/matriz-util.cpp
+    src/sol.cpp \
+    src/Arvore.cpp \
+    src/Gramatica.cpp \
+    src/Parser.cpp \
+    src/TabelaLR1.cpp \
+    src/debug-util.cpp \
+    src/matriz-util.cpp
 
 GRAM_SRCS := $(wildcard $(GRAM_DIR)/*.cpp)
-SRCS := $(CORE_SRCS) $(GRAM_SRCS)
+FRAME_SRCS := $(wildcard $(GRAM_DIR)/frame/*.cpp)
+
+SRCS := $(CORE_SRCS) $(GRAM_SRCS) $(FRAME_SRCS)
 OBJS := $(patsubst %.cpp,$(BUILD_DIR)/%.o,$(SRCS))
 DEPS := $(OBJS:.o=.d)
 
@@ -28,11 +30,11 @@ DEPS := $(OBJS:.o=.d)
 all: $(TARGET)
 
 $(TARGET): $(OBJS)
-	$(CXX) $(CXXFLAGS) $^ -o $@
+	$(CXX) $(CXXFLAGS) $^ -o $@ 
 
 $(BUILD_DIR)/%.o: %.cpp
 	@mkdir -p $(dir $@)
-	$(CXX) $(CXXFLAGS) -I$(GRAM_DIR) -Isrc -MMD -MP -c $< -o $@
+	$(CXX) $(CXXFLAGS) -I$(GRAM_DIR) -I$(GRAM_DIR)/frame -Isrc -MMD -MP -c $< -o $@
 
 run: $(TARGET)
 	./$(TARGET) $(GRAM_FILE) $(TABELA_FILE) $(PARAMS)
