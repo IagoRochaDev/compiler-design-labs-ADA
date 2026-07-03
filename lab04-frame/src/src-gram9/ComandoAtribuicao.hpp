@@ -1,0 +1,20 @@
+#ifndef _COMANDO_ATRIBUI_HPP_
+#define _COMANDO_ATRIBUI_HPP_
+#include "Comando.hpp"
+#include "ID.hpp"
+#include "Expressao.hpp"
+#include "frame/FrameAcesso.hpp"
+using namespace std;
+
+class ComandoAtribuicao : public Comando {
+public:
+  ID * esquerda;
+  Expressao * direita;
+  FrameAcesso * acesso_frame = nullptr;
+
+  ComandoAtribuicao();
+  bool executa(TabelaSimbolos* memoria);
+  void debug_com_tab(int tab);
+};
+
+#endif
