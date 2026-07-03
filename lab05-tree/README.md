@@ -1,29 +1,28 @@
-# Laboratório 4: Geração de Layout de Frame e Análise de Escape
+# Laboratório 5: Tradução para IR (Intermediate Representation)
 
 ## 📌 O que é?
 
-O Laboratório 4 é o momento em que nosso compilador deixa de se preocupar apenas com a execução interpretada e começa a se preparar para a geração de código real (assembly). O objetivo deste projeto é varrer a Árvore de Sintaxe Abstrata (AST) para planejar a distribuição de memória da função, gerando a estrutura `FrameFuncao`.
+O Laboratório 5 avança no pipeline do compilador traduzindo a Árvore de Sintaxe Abstrata (AST) para uma Representação Intermediária (IR) inspirada no estilo do livro do Appel. Nesta etapa transformamos expressões e comandos de alto nível em uma árvore de operações simples (`Stm`, `Exp`, `CALL`, `MEM`, `TEMP`, etc.) que facilitará passos posteriores como alocação de registradores e geração de código final.
 
-Nesta fase, implementamos recursos cruciais para a compilação:
+Principais objetivos:
 
-* **Expansão da Gramática:** suporte a chamadas de funções aninhadas dentro de expressões matemáticas, passando múltiplos argumentos.
-* **Análise de Escape:** um algoritmo inteligente que decide o destino de uma variável. Se ela for passada como argumento para outra função, ela "escapa" para a memória (Frame). Se for apenas de uso interno, fica armazenada em Pseudo-Registradores.
-* **Cálculo de Layout de Memória:** definição matemática dos *offsets* (deslocamentos) relativos ao *Frame Pointer* (FP). Parâmetros ganham posições positivas (`+8`, `+16`), e variáveis locais no frame ganham posições negativas a partir da área de organização (`-40`, `-48`).
-* **Anotação Espacial na AST:** cada uso de variável e cada lado esquerdo de atribuição na árvore recebe um objeto de acesso, vinculando a sintaxe diretamente ao seu endereço físico planejado.
+- Suportar chamadas de função como expressões (`CALL`) e nomes simbólicos (`NAME`).
+- Traduzir expressões (binárias, constantes, variáveis) para nós IR (`ExpBinop`, `ExpConst`, `ExpMem`, `ExpTemp`, ...).
+- Traduzir comandos (atribuições, condicionais, laços, retorno) para statements IR (`StmMove`, `StmCJump`, `StmLabel`, `StmExp`, ...).
+- Imprimir/serializar a IR para depuração e validação.
 
 ---
 
 ## 🛠️ Como Compilar
 
-O projeto utiliza um `Makefile` para facilitar o processo de build. O código fonte está estruturado em C++11 (ou superior).
-
-Para compilar o projeto e gerar o executável, abra o terminal na raiz do projeto e execute:
+O projeto utiliza um `Makefile` central na raiz de cada laboratório. Para compilar o Laboratório 5, abra um terminal na raiz do workspace do lab e execute:
 
 ```bash
+cd lab05-tree
 make
 ```
 
-Para limpar os arquivos objetos `.o` e o executável gerados, utilize:
+Para limpar objetos e binários:
 
 ```bash
 make clean
@@ -33,42 +32,45 @@ make clean
 
 ## 🚀 Como Executar
 
-O programa continua recebendo a árvore de tokens via entrada padrão (stdin), além dos arquivos da gramática e tabela LR(1). A principal diferença é que agora o foco da saída no terminal é o relatório detalhado do mapa de memória.
+O executável espera receber a árvore de tokens via stdin e os caminhos da gramática/tabela como argumentos, como nas etapas anteriores. Também há uma regra `run` no `Makefile` que facilita testes com arquivos `.tokens`.
 
-### Execução padrão
-
-Use a regra `run` do Make para compilar e testar redirecionando o seu arquivo de teste:
+Exemplo rápido (no diretório `lab05-tree`):
 
 ```bash
-make run < ins/teste_lab04.tokens
+make run < ins/new_tests/caso01.tokens
 ```
 
-A saída exibirá o **Resumo do Frame**, detalhando o tamanho total em bytes, a quantidade de parâmetros processados e quais variáveis foram parar na memória ou em registradores.
+Saída esperada (trecho):
+
+```text
+------- Gerando IR (Lab 05) -----------
+MOVE TEMP(1), CALL( NAME(soma), [TEMP(2), TEMP(3)] )
+EXP TEMP(1)
+---------------------------------------
+```
+
+Observações:
+
+- Dependendo do layout do frame (etapa anterior) os parâmetros podem aparecer como `MEM( BINOP( FP, CONST(offset) ) )` em vez de `TEMP(...)`. Isso é normal enquanto a integração com o cálculo de frame estiver ativa.
+- Caso precise testar rapidamente, use os arquivos em `ins/` (ex.: `ins/new_tests/caso01.tokens`).
 
 ---
 
-## ⚙️ Como Funciona o Pipeline
+## ⚙️ Principais Arquivos
 
-A execução agora possui etapas focadas no planejamento de memória:
-
-* **Parsing e Construção da AST:** o parser valida a nova gramática estendida e a classe `Funcao` extrai a árvore, que agora suporta estruturas como `verificar(x + 1)`.
-* **Passo 2 - Análise de Escape:** o gerador varre todos os comandos buscando chamadas de função. Ele intercepta os argumentos repassados, extrai os nomes das variáveis associadas e as insere em uma lista de "variáveis no frame", além de calcular qual chamada exige o maior número de parâmetros de saída.
-* **Passo 3 - Cálculo do Layout:** * Parâmetros recebem `FrameAcessoNoFrame` subindo a partir de `+8`.
-* Variáveis marcadas na análise de escape recebem `FrameAcessoNoFrame` descendo a partir de `-40`.
-* As demais variáveis recebem `FrameAcessoTemp` com IDs sequenciais (pseudo-registradores).
-* O `tamanho_frame` final é cravado na fórmula: `40 + (8 * n_variaveis_no_frame)`.
-
-
-* **Passo 4 - Linkagem Memória-Árvore:** uma última varredura na AST injeta os ponteiros de acesso recém-calculados dentro das instâncias de `ExpressaoVariavel` e `ComandoAtribuicao`, deixando a árvore totalmente pronta para a futura tradução para assembly.
+- `src/src-gram9/TradutorIR.cpp` : implementação principal da tradução AST -> IR.
+- `src/src-gram9/TradutorIR.hpp` : interface do tradutor.
+- `src/src-gram9/tree/` : contém os nós do IR (`Exp`, `Stm`, `ExpCall`, `ExpName`, `StmMove`, `StmExp`, ...).
+- `ins/` : coleciona entradas de teste em formato `.tokens`.
 
 ---
 
-## 🏗️ Arquitetura
+## 🧭 Como Funciona (resumo do fluxo)
 
-Novas classes e estruturas foram adicionadas para gerenciar a abstração da máquina:
-
-* **FrameFuncao:** o maestro do laboratório. Ele armazena as estatísticas do frame (`tamanho_frame`, `n_param_entrada`, etc.) e mantém um dicionário (`std::map`) garantindo que a mesma variável no código sempre aponte para o mesmo endereço alocado.
-* **FrameAcesso:** classe base abstrata que representa o método genérico de acesso de um dado.
-* **FrameAcessoNoFrame:** herdeiro de `FrameAcesso`, armazena o *offset* (em bytes) exato em que a variável viverá na pilha de execução (Stack).
-* **FrameAcessoTemp:** herdeiro de `FrameAcesso`, utilizado para variáveis leves de uso puramente local, armazenando apenas um número de identificação (`id`) para os registradores temporários da CPU.
-* **Integração na AST:** as classes preexistentes `ComandoAtribuicao` e `ExpressaoVariavel` ganharam o atributo `acesso_frame`, permitindo que o interpretador ou gerador de código final saiba instantaneamente onde ler ou gravar os valores durante a execução real.
+1. O parser gera a árvore de parse a partir dos tokens.
+2. A camada de extração constrói a AST de alto nível (`Funcao`, `Comando`, `Expressao`).
+3. `TradutorIR` visita a AST e para cada nó produz uma sub-árvore IR correspondente:
+   - `ExpressaoVariavel` pode virar `ExpMem` (acesso via frame), `ExpTemp` ou — se possuir argumentos — uma `ExpCall` cujo `nome_funcao` é um `ExpName`.
+   - `ComandoAtribuicao` vira `StmMove(destino, origem)`.
+   - `ComandoRetorno` é traduzido para `StmExp(exp_retorno)` para avaliação em linha.
+4. A IR é impressa de forma legível para validação no terminal.
